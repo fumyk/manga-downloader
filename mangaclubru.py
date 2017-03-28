@@ -1,4 +1,3 @@
-import progressbar
 import requests as http
 from bs4 import BeautifulSoup
 
@@ -16,10 +15,12 @@ def get_view(page):
     return VIEW_URL + view_id
 
 
-def parse(page, skip):
+def parse(page, skip, without_progressbar):
     """
     Returns image link generator
     """
+    if not without_progressbar:
+        import progressbar
     soup = BeautifulSoup(page, 'html.parser')
     name = soup.find('div', {'class': 'head-body container'}).h2.a.string.replace('/', '-')
     print('Getting chapter list for ' + name)
@@ -34,9 +35,13 @@ def parse(page, skip):
     chapters = chapters[skip:]
     # main loop
     n = 1 + skip
-    bar = progressbar.ProgressBar(max_value=c, widgets=[progressbar.SimpleProgress(), progressbar.Bar()])
+    if not without_progressbar:
+        bar = progressbar.ProgressBar(max_value=c, widgets=[progressbar.SimpleProgress(), progressbar.Bar()])
     for a in chapters:
-        bar.update(n)
+        if without_progressbar:
+            print(n, 'of', c)
+        else:
+            bar.update(n)
         soup = BeautifulSoup(http.get(a).text, 'html.parser')
         for manga_link in soup.find('div', {'class': 'manga-lines-pages'}).find_all('a'):
             yield {'name': name,

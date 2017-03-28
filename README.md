@@ -16,3 +16,5 @@ sudo pip3 install -r requirements.txt
 # пример ссылки
 ./manga-dl.py https://mangaclub.ru/617-kodomo-no-jikan.html
 ```
+
+Используйте флаг `--without-progressbar` если есть проблемы с прогресбаром
