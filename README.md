@@ -5,7 +5,7 @@
 Необходим python3
 
 
-###Исользование
+##Использование
 
 ```bash
 git clone git@github.com:fumycat/manga-downloader.git
