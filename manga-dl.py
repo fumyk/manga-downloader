@@ -7,7 +7,8 @@ import requests
 
 @click.command()
 @click.argument('url', type=str)
-def main(url):
+@click.option('--skip', default=0, type=int, help='Skip first n chapters')
+def main(url, skip):
     if 'mangaclub.ru' in url:
         from mangaclubru import get_view
         from mangaclubru import parse
@@ -16,7 +17,7 @@ def main(url):
         exit()
 
     main_page_url = get_view(requests.get(url).text)
-    for o in parse(requests.get(main_page_url).text):
+    for o in parse(requests.get(main_page_url).text, skip):
         if not os.path.exists(o.get('name') + '/' + o.get('chapter')):
             os.makedirs(o.get('name') + '/' + o.get('chapter'))
 

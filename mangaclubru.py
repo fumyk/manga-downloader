@@ -16,7 +16,7 @@ def get_view(page):
     return VIEW_URL + view_id
 
 
-def parse(page):
+def parse(page, skip):
     """
     Returns image link generator
     """
@@ -29,8 +29,11 @@ def parse(page):
         chapters.append(link.get('href'))
     c = len(chapters)
     print('Found {} chapters\nDownloading...'.format(str(c)))
+    if skip > 0:
+        print('Skipping first {} chapters'.format(str(skip)))
+    chapters = chapters[skip:]
     # main loop
-    n = 1
+    n = 1 + skip
     bar = progressbar.ProgressBar(max_value=c, widgets=[progressbar.SimpleProgress(), progressbar.Bar()])
     for a in chapters:
         bar.update(n)
