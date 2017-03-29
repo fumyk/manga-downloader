@@ -10,9 +10,6 @@ FILE_EXTENSION = '.jpg'
 
 
 def process(url, skip):
-    """
-    Returns image link generator
-    """
     main_page = BeautifulSoup(http.get(url).text, 'html.parser')
     div = main_page.find('div', {'class': 'read_manga'})
     if div.a.get('href') == 'javascript:document.write(AdultManga)':
@@ -27,8 +24,7 @@ def process(url, skip):
     chapters = []
     for link in chapter_list.find_all('a'):
         chapters.append(link.get('href'))
-    c = len(chapters)
-    print('Found', c, 'chapters')
+    print('Found', len(chapters), 'chapters')
     if skip > 0:
         print('Skipping first {} chapters'.format(str(skip)))
         chapters = chapters[skip:]
