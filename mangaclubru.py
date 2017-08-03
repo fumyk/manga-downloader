@@ -12,7 +12,7 @@ FILE_EXTENSION = '.jpg'
 def process(url, skip):
     main_page = BeautifulSoup(http.get(url).text, 'html.parser')
     div = main_page.find('div', {'class': 'read_manga'})
-    if div.a.get('href') == 'javascript:document.write(AdultManga)':
+    if div.a.get('href') == "javascript:document.write(AdultManga)":
         view_id = div.script.string.split('/view/')[1].split('"')[0]
     else:
         view_id = div.a.get('href').split('/view/')[1]
@@ -34,7 +34,7 @@ def process(url, skip):
     # main loop
     for a in chapters:
         soup = BeautifulSoup(session.get(a).text, 'html.parser')
-        current_chapter_pages = soup.find('div', {'class': 'manga-lines-pages'}).find_all('a')
+        current_chapter_pages = soup.find('div', {'class': 'manga-lines-page'}).find_all('a')
         chapter_id = current_chapter_pages[0].get('data-c')
         print('Processing chapter', chapter_id)
         current_chapter_path = name + '/' + chapter_id
