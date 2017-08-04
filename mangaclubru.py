@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 ROOT_URL = 'https://mangaclub.ru/'
 VIEW_URL = 'https://mangaclub.ru/manga/view/'
 FILE_EXTENSION = '.jpg'
+DONOTDOWNLOAD = False # debug
 
 
 def process(url, skip):
@@ -19,12 +20,10 @@ def process(url, skip):
 
     soup = BeautifulSoup(http.get(VIEW_URL + view_id).text, 'html.parser')
     name = soup.find('div', {'class': 'head-body container'}).h2.a.string.replace('/', '-')
-    print('Getting chapter list for ' + name)
     chapter_list = soup.find('div', {'class': 'manga-thumbs-chapters scroll-chapters'})
     chapters = []
     for link in chapter_list.find_all('a'):
         chapters.append(link.get('href'))
-    print('Found', len(chapters), 'chapters')
     if skip > 0:
         print('Skipping first {} chapters'.format(str(skip)))
         chapters = chapters[skip:]
@@ -42,9 +41,15 @@ def process(url, skip):
             os.makedirs(current_chapter_path)
         for page in current_chapter_pages:
             file_path = current_chapter_path + '/' + page.get('data-p') + FILE_EXTENSION
-            if os.path.exists(file_path):
+            if os.path.exists(file_path) or DONOTDOWNLOAD:
                 continue
             response = session.get(page.get('data-i'))
             with open(file_path, 'wb') as out:
                 out.write(response.content)
             del response
+        # update chapter list
+        chapter_list = soup.find('div', {'class': 'manga-thumbs-chapters scroll-chapters'})
+        for l in chapter_list.find_all('a'):
+            tc = l.get('href')
+            if tc not in chapters:
+                chapters.append(tc)
